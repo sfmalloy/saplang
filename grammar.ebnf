@@ -1,22 +1,46 @@
-Program ::= Decls
+Program ::= { Decl }
 
-Decls ::= RegularDecl | TrunkDecl
+Decl ::= RegularDecl | TrunkDecl
 
-RegularDecl ::= IdentifierDecl ( ";" | Assignment )
+RegularDecl ::= ( "let" | "const" ) ( VarDecl ( ";" | "=" Expr ) | FuncDecl ( ";" | "=" CompoundStmt ) )
 
-IdentifierDecl ::= ( "let" | "const" ) Identifier "<" Type ">"
+VarDecl ::= Identifier TypeSpec
 
-TrunkDecl ::= "trunk" Identifier "=" "{" { IdentifierDecl ";" } "}"
+FuncDecl ::= VarDecl "(" [ VarDecl { "," VarDecl } ] ")"
 
-Assignment ::= "=" ( VarAssignment | FuncAssignment )
+CompoundStmt ::= "{" { Decl | Stmt } "}"
 
-VarAssignment ::= ( { Number } | String | Identifier )
+Stmt ::= ForStmt | WhileStmt | ConditionalStmt | CallStmt | ReturnStmt | ExprStmt
+
+ForStmt ::= "for" "(" [ ExprStmt ] ";" [ ExprStmt ] ";" [ ExprStmt ] ")" CompoundStmt
+
+WhileStmt ::= "while" "(" [ ExprStmt ] ")" CompoundStmt
+
+ConditionalStmt ::= "if" "(" ExprStmt ")" [ "else" ( ConditionalStmt | CompoundStmt ) ]
+
+CallStmt ::= Identifier "(" [ Expr { "," Expr } ] ")" ";"
+
+ReturnStmt ::= "return" [ Expr ] ";"
+
+ExprStmt = ReassignStmt | Expr
+
+(* Don't forget about array subscript *)
+
+ReassignStmt ::= Identifier "=" Expr
+
+TrunkDecl ::= "trunk" Identifier "=" "{" { ( VarDecl ";" ) } "}"
+
+TypeSpec ::= "<" Type [ TypeSpec ] ">"
+
+Expr ::= AddTerm { AddOp AddTerm }
+
+AddTerm ::= MulTerm { MulOp MulTerm }
+
+MulTerm ::= "(" Expr ")" | Identifier
+
+AddSubExpr ::= Expr ( "+" | "-" ) Expr
 
 Identifier ::= Letter { Letter | Digit }
-
-String ::= ( '"' { Char } '"' | "'" { Char } "'" )
-
-Char ::= Number | Letter | SpecialChar
 
 Digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
@@ -30,8 +54,4 @@ Letter ::= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j"
 Type ::= "i8" | "i16" | "i32" | "i64" |
          "u8" | "u16" | "u32" | "u64" |
          "f32"| "f64" |
-         "char" | "str" | "array" | "set" | "dict"
-
-SpecialChar ::= ...
-
-FuncAssignment ::= 
+         "func" | "char" | "str" | "array" | "set" | "dict" | "void"
