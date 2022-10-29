@@ -1,0 +1,38 @@
+/*
+    this program is an endgoal of the language of what it
+    could potentially look like, but is subject to change.
+*/
+
+/* basically a struct but funnier because tree trunk */
+trunk stuff = {
+    let num1<i32>;
+    let num2<i32>;
+    const num3<i32> = 20;
+}
+
+const add<i32>(a<i32>, b<i32>) = {
+    return a + b;
+}
+
+let main() = {
+    let num1<i32> = 20;
+    let num2<i32> = 7;
+
+    let sum = add(1, 2);
+
+    let types<array<type>> = [
+        i8, i16, i32, i64,
+        u8, u16, u32, u64,
+        f32, f64,
+        char, str, array, set, dict,
+    ];
+
+    println("wow");
+    print("very epic");
+
+    // if possible, auto convert input to be correct type if a type is specified.
+    // otherwise default to str
+    let str_input<str> = input();
+    let num_input<i32> = input();
+    const num_input_verbose<i32> = to_i32(num_input());
+}
