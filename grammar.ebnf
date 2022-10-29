@@ -10,37 +10,43 @@ FuncDecl ::= VarDecl "(" [ VarDecl { "," VarDecl } ] ")"
 
 CompoundStmt ::= "{" { Decl | Stmt } "}"
 
-Stmt ::= ForStmt | WhileStmt | ConditionalStmt | CallStmt | ReturnStmt | ExprStmt
+Stmt ::= ForStmt | WhileStmt | ConditionalStmt | ReturnStmt | ExprStmt
 
-ForStmt ::= "for" "(" [ ExprStmt ] ";" [ ExprStmt ] ";" [ ExprStmt ] ")" CompoundStmt
+ForStmt ::= "for" "(" [ Expr ] ";" [ Expr ] ";" [ Expr ] ")" CompoundStmt
 
-WhileStmt ::= "while" "(" [ ExprStmt ] ")" CompoundStmt
+WhileStmt ::= "while" "(" [ Expr ] ")" CompoundStmt
 
-ConditionalStmt ::= "if" "(" ExprStmt ")" [ "else" ( ConditionalStmt | CompoundStmt ) ]
+ConditionalStmt ::= "if" "(" Expr ")" [ "else" ( ConditionalStmt | CompoundStmt ) ]
 
-CallStmt ::= Identifier "(" [ Expr { "," Expr } ] ")" ";"
+CallExpr ::= Identifier "(" [ Expr { "," Expr } ] ")"
 
 ReturnStmt ::= "return" [ Expr ] ";"
 
-ExprStmt = ReassignStmt | Expr
-
-(* Don't forget about array subscript *)
-
-ReassignStmt ::= Identifier "=" Expr
+ExprStmt = [ Expr ] ";"
 
 TrunkDecl ::= "trunk" Identifier "=" "{" { ( VarDecl ";" ) } "}"
 
 TypeSpec ::= "<" Type [ TypeSpec ] ">"
 
-Expr ::= AddTerm { AddOp AddTerm }
+Expr ::= SimpleExpr | AssignExpr
+
+AssignExpr ::= Var "=" Expr
+
+SimpleExpr ::= AddTerm { AddOp AddTerm }
 
 AddTerm ::= MulTerm { MulOp MulTerm }
 
-MulTerm ::= "(" Expr ")" | Identifier
+MulTerm ::= "(" Expr ")" | Var | Call | Number
 
-AddSubExpr ::= Expr ( "+" | "-" ) Expr
+AddOp ::= "+" | "-"
+
+MulOp ::= "*" | "/"
 
 Identifier ::= Letter { Letter | Digit }
+
+Var ::= Identifier [ "[" Expr "]" ]
+
+Number ::= Digit { Digit } [ "." Digit { Digit } ]
 
 Digit ::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
