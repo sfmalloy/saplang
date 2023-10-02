@@ -1,38 +1,73 @@
 /*
-    this program is an endgoal of the language of what it
-    could potentially look like, but is subject to change.
+ *  this program is an endgoal of the language of what it
+ *  could potentially look like, but is subject to change.
+ */
+
+/*
+    primatives:
+    -----------
+    i8, i16, i32, i64,
+    u8, u16, u32, u64,
+    f32, f64,
+    char, str, bool
+
+    other keywords:
+    ---------------
+    func, const, let, trunk, generic, ref,
+    for, while, break,
+    and, or, not, in, 
+    null
+
+    builtin functions:
+    ------------------
+    print: func<void>(fmt: str, args...);
+    println: func<void>(fmt: str, args...);
+    input: func<str>();
+
+    to -- a special function that is implemented for every primitive
+
+    stdlib modules:
+    ---------------
+    list, set, dict, math
 */
 
-/* basically a struct but funnier because tree trunk */
-trunk stuff = {
-    let num1<i32>;
-    let num2<i32>;
-    const num3<i32> = 20;
+// import statements
+import stdlib.list;
+
+// also yes, theres semicolons so I don't have to deal with different line-endings
+
+/* 
+ *  trunks are the fundamental structures in saplang. they contain data
+ *  and can be called.
+ */
+generic<T>
+trunk Point = {
+    let x: T;
+    let y: T;
+
+    // since functions are treated as types, they can be part of trunks, making them behave similar to classes
+    const move: func<void>(dist: T) = {
+        self.x += dist;
+        self.y += dist;
+    }
+
+    // there will eventually be some way to do operator overloading
+    // 
+    // +, -, *, /, ++ (pre and post), -- (pre and post), **, (), =
 }
 
-const add<i32>(a<i32>, b<i32>) = {
-    return a + b;
+// pass by reference must be explicit, otherwise parameter is copied
+generic<T>
+const is_origin: func<bool>(pt: ref<Point<T>>) = {
+    return pt.x == 0 and pt.y == 0;
 }
 
-let main() = {
-    let num1<i32> = 20;
-    let num2<i32> = 7;
-
-    let sum = add(1, 2);
-
-    let types<array<type>> = [
-        i8, i16, i32, i64,
-        u8, u16, u32, u64,
-        f32, f64,
-        char, str, array, set, dict,
-    ];
-
-    println("wow");
-    print("very epic");
-
-    // if possible, auto convert input to be correct type if a type is specified.
-    // otherwise default to str
-    let str_input<str> = input();
-    let num_input<i32> = input();
-    const num_input_verbose<i32> = to_i32(num_input());
+// entry point
+// MUST be const
+const main: func<void>() = {
+    let x: i32 = to(input());
+    let y: i32 = to<i32>(input()); // you can manually specify 
+                                   // function return types if there's 
+                                   // more than one implementation and 
+                                   // it can't be infered.
 }
